@@ -1,0 +1,204 @@
+---
+pagination:
+  data: langs
+  size: 1
+  alias: lang
+  addAllPagesToCollections: true
+permalink: "/{{ lang }}/"
+layout: base.njk
+bodyClass: page-home
+eleventyComputed:
+  seoTitle: "{{ pages.home.seo_title[lang] }}"
+  seoDesc: "{{ pages.home.seo_desc[lang] }}"
+---
+{%- set rot = phrases.items | where('confirmed', true) -%}
+{%- set V = T.v3 -%}
+<section class="hero3">
+  <div class="container hero3-grid">
+    <div class="hero3-text">
+      <div class="kicker"><svg class="ic"><use href="#i-factory"/></svg>{{ V.hero_kicker }}</div>
+      <h1>{{ V.hero_h1a }} <em>{{ V.hero_h1b }}</em></h1>
+      <p class="hero-rot" data-rotation data-count="{{ rot.length }}">{% for ph in rot %}<span class="rot{% if loop.first %} is-active{% endif %}">{{ ph.a | tr(lang) }} {{ ph.b | tr(lang) }}</span>{% endfor %}</p>
+      <script>(function(){var h=document.currentScript.previousElementSibling;var n=+h.getAttribute('data-count');if(!n)return;try{var key='ap-rot-'+document.documentElement.lang;var st=JSON.parse(sessionStorage.getItem(key)||'null');if(!st||!st.o||st.o.length!==n){var o=[];for(var i=0;i<n;i++)o.push(i);for(var j=n-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=o[j];o[j]=o[k];o[k]=t;}st={o:o,i:0};}else{st.i=(st.i+1)%n;}sessionStorage.setItem(key,JSON.stringify(st));var idx=st.o[st.i];var sp=h.children;for(var c=0;c<sp.length;c++){sp[c].classList.toggle('is-active',c===idx);}}catch(e){}})();</script>
+      <ul class="hero3-points">{% for pt in V.hero_points %}<li><svg class="ic"><use href="#i-check"/></svg>{{ pt }}</li>{% endfor %}</ul>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="{{ (L + '/calculator/') | url }}">{{ T.cta.calc }} <svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-tg btn-lg" href="{{ company.telegram }}" rel="noopener" data-event="tg_click"><svg class="ic"><use href="#i-tg"/></svg>{{ T.cta.tg }}</a>
+      </div>
+      <p class="min-line"><svg class="ic"><use href="#i-scale"/></svg>{{ T.hero.min_line }}</p>
+    </div>
+    <div class="hero3-visual">
+      <div class="hero3-blob" aria-hidden="true"></div>
+      <img class="hero3-main" src="{{ '/assets/product-06.jpg' | url }}" alt="{{ portfolio.items[0].alt | tr(lang) }}" width="900" height="900" fetchpriority="high">
+      <img class="hero3-side s1" src="{{ '/assets/product-maika.jpg' | url }}" alt="{{ portfolio.items[7].alt | tr(lang) }}" width="300" height="300" loading="lazy">
+      <img class="hero3-side s2" src="{{ '/assets/product-skechers.jpg' | url }}" alt="{{ portfolio.items[6].alt | tr(lang) }}" width="300" height="300" loading="lazy">
+      <span class="hero3-tag">{{ V.hero_note }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="marquee-wrap" aria-label="{{ V.clients_label }}">
+  <div class="marquee-label">{{ V.clients_label }}</div>
+  <div class="marquee"><div class="marquee-track">
+    {%- for pass in [1, 2] %}
+    {%- for w in portfolio.items %}<a class="mq-item" href="{{ (L + '/portfolio/') | url }}#{{ w.id }}"{% if pass == 2 %} aria-hidden="true" tabindex="-1"{% endif %}><img src="{{ ('/' + w.image) | url }}" alt="{% if pass == 1 %}{{ w.alt | tr(lang) }}{% endif %}" width="72" height="72" loading="lazy"><span>{{ w.client }}</span></a>{% endfor %}
+    {%- endfor %}
+  </div></div>
+</section>
+
+<section class="stats3">
+  <div class="container">
+    <ul class="stats3-row">
+      <li><b>{{ company.facts.bags_total }}</b><span>{{ T.hero.facts.bags }}</span></li>
+      <li><b>{{ company.facts.clients }}</b><span>{{ T.hero.facts.clients }}</span></li>
+      <li><b>{{ company.facts.projects }}</b><span>{{ T.hero.facts.projects }}</span></li>
+      <li><b>1–8</b><span>{{ T.hero.facts.colors }}</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="products">
+  <div class="container">
+    <div class="sec-head center"><h2>{{ V.cats_title }}</h2><p class="sub">{{ V.cats_sub }}</p></div>
+    <style>{% for c in categories.items %}#tab-{{ c.slug }}:checked~.tp-{{ c.slug }}{display:grid}#tab-{{ c.slug }}:checked~.tab-labels label[for=tab-{{ c.slug }}]{background:var(--red);color:#fff}#tab-{{ c.slug }}:focus-visible~.tab-labels label[for=tab-{{ c.slug }}]{outline:3px solid var(--ink);outline-offset:-3px}{% endfor %}</style>
+    <div class="tabs3">
+      {% for c in categories.items %}<input type="radio" name="cat-tab" id="tab-{{ c.slug }}" class="tab-radio"{% if loop.first %} checked{% endif %}>{% endfor %}
+      <div class="tab-labels" role="tablist">{% for c in categories.items %}<label for="tab-{{ c.slug }}" class="tab-label">{{ c.name | tr(lang) }}</label>{% endfor %}</div>
+      {% for c in categories.items %}
+      {%- set cprods = products.items | where('category', c.slug) -%}
+      {%- set sp = cprods | catSpan -%}
+      {%- set cimg = c.image -%}
+      {%- if not cimg %}{% for p in cprods %}{% if not cimg and p.images and p.images.length and p.images[0].src %}{% set cimg = p.images[0].src %}{% endif %}{% endfor %}{% endif -%}
+      <div class="tab-panel tp-{{ c.slug }}">
+        <div class="tab-text">
+          <h3>{{ c.name | tr(lang) }}</h3>
+          <p class="lead">{{ c.short | tr(lang) }}</p>
+          <ul class="spec3">
+            <li><svg class="ic"><use href="#i-bag"/></svg><span>{{ T.catalog.type if T.catalog.type else T.calc.type }}: <b>{% for p in cprods %}{{ T.calc.bag_types[p.type] or (p.name | tr(lang)) }}{% if not loop.last %}, {% endif %}{% endfor %}</b></span></li>
+            {% if sp.materials.length %}<li><svg class="ic"><use href="#i-drop"/></svg><span>{{ T.calc.material }}: <b>{% for m in sp.materials %}{{ T.calc.materials[m] or m }}{% if not loop.last %}, {% endif %}{% endfor %}</b></span></li>{% endif %}
+            {% if sp.thickness %}<li><svg class="ic"><use href="#i-scale"/></svg><span>{{ T.calc.thickness }}: <b>{{ sp.thickness }}</b>{% if cfg.demo_mode %}<span class="demo-tag">{{ T.demo.badge }}</span>{% endif %}</span></li>{% endif %}
+            {% if sp.width %}<li><svg class="ic"><use href="#i-box"/></svg><span>{{ T.calc.width }}: <b>{{ sp.width }}</b>{% if cfg.demo_mode %}<span class="demo-tag">{{ T.demo.badge }}</span>{% endif %}</span></li>{% endif %}
+            {% if sp.colors %}<li><svg class="ic"><use href="#i-pen"/></svg><span>{{ T.calc.colors }}: <b>{{ sp.colors }}</b></span></li>{% endif %}
+          </ul>
+          <div class="tab-actions">
+            <a class="btn btn-primary" href="{{ (L + '/catalog/' + c.slug + '/') | url }}">{{ V.cats_more }} <svg class="ic"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn-line" href="{{ (L + '/calculator/') | url }}?type={{ c.types[0] }}">{{ T.cta.calc }}</a>
+          </div>
+        </div>
+        <div class="tab-media">
+          {% if cimg %}<img src="{{ ('/' + cimg) | url }}" alt="{{ c.name | tr(lang) }}" width="600" height="600" loading="lazy">{% else %}<span class="tab-ph">{% set bagType = c.types[0] %}{% include "partials/bag-icon.njk" %}</span>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section calc3" id="calc">
+  <div class="container">
+    <div class="sec-head center"><h2>{{ V.calc_title }}</h2><p class="sub">{{ V.calc_sub }}</p></div>
+    <div class="calc-tiles">
+      {% for ty in ['maika', 'pvd', 'loop', 'courier', 'fasovka', 'film'] %}
+      <a class="calc-tile ct-{{ loop.index }}" href="{{ (L + '/calculator/') | url }}?type={{ ty }}" data-event="calc_tile">
+        {% set bagType = ty %}{% include "partials/bag-icon.njk" %}
+        <span class="ct-name">{{ T.calc.bag_types[ty] }}</span>
+        <span class="ct-go">{{ V.calc_go }} <svg class="ic"><use href="#i-arrow"/></svg></span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="bestsellers">
+  <div class="container">
+    {% set shEyebrow = T.nav.bestsellers %}{% set shTitle = T.bestsellers.title %}{% set shSub = T.bestsellers.sub %}{% set shLink = L + '/bestsellers/' %}{% set shLinkText = T.cta.all %}
+    {% include "partials/section-head.njk" %}
+    <div class="grid grid-4 bs-grid">
+      {% for b in bestsellers.items | where('active', true) | sortBy('order') %}{% include "partials/bestseller-card.njk" %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section steps3-sec" id="steps">
+  <div class="container">
+    <div class="sec-head center"><h2>{{ V.steps_title }}</h2><p class="sub">{{ V.steps_sub }}</p></div>
+    <ol class="steps3">
+      {% for s in V.steps %}<li class="step3"><span class="step3-n">{{ '0' + loop.index }}</span><b>{{ s.t }}</b><span>{{ s.d }}</span></li>{% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="portfolio">
+  <div class="container">
+    <div class="sec-head center"><h2>{{ V.works_title }}</h2><p class="sub">{{ V.works_sub }}</p></div>
+    <div class="works3">
+      {% for w in portfolio.items %}
+      <a class="work3" href="{{ (L + '/portfolio/') | url }}#{{ w.id }}">
+        <img src="{{ ('/' + w.image) | url }}" alt="{{ w.alt | tr(lang) }}" loading="lazy" width="600" height="600">
+        <span class="work3-cap"><b>{{ w.client }}</b><span>{{ T.calc.bag_types[w.calc.type] }} · {{ w.colors }} {{ T.portfolio.colors }}</span></span>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="center-text more-row"><a class="btn btn-line" href="{{ (L + '/portfolio/') | url }}">{{ T.cta.all }} <svg class="ic"><use href="#i-arrow"/></svg></a></div>
+  </div>
+</section>
+
+<section class="section niche" id="niche" data-niche>
+  <div class="container">
+    <div class="sec-head center"><h2>{{ T.niche.title }}</h2><p class="sub">{{ T.niche.sub }}</p></div>
+    <div class="niche-btns">
+      {% for n in niches.items %}{% set nc = clients.items | where('niche', n.key) %}{% if nc.length >= niches.min_clients %}
+      <button type="button" class="pill niche-btn" data-niche-btn="{{ n.key }}" data-niche-app="{{ n.application }}"><svg class="ic"><use href="#i-{{ n.icon }}"/></svg>{{ n.label | tr(lang) }}</button>
+      {% endif %}{% endfor %}
+      <button type="button" class="pill niche-btn niche-none" data-niche-btn="none">{{ T.niche.none_btn }}</button>
+    </div>
+    {% for n in niches.items %}{% set nc = clients.items | where('niche', n.key) %}{% if nc.length >= niches.min_clients %}
+    <div class="glass niche-panel" data-niche-panel="{{ n.key }}" hidden>
+      <div class="niche-panel-grid">
+        <div>
+          <h3>{{ T.niche.clients_label }}: {{ n.label | tr(lang) }}</h3>
+          <ul class="chips">{% for c in nc %}<li class="chip">{{ c.name }}</li>{% endfor %}</ul>
+          <a class="btn btn-line btn-sm" href="{{ (L + '/catalog/') | url }}?use={{ n.application }}">{{ T.niche.go_catalog }} <svg class="ic"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div class="niche-photos">
+          {% for c in nc %}{% if c.work %}{% set w = portfolio.items | find('id', c.work) %}{% if w and loop.index <= 3 %}<a class="photo" href="{{ (L + '/portfolio/') | url }}#{{ w.id }}"><img src="{{ ('/' + w.image) | url }}" alt="{{ w.alt | tr(lang) }}" loading="lazy" width="300" height="300"></a>{% endif %}{% endif %}{% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}{% endfor %}
+  </div>
+</section>
+
+<section class="section why3" id="why">
+  <div class="container">
+    <div class="sec-head center"><h2>{{ T.why.title }}</h2><p class="sub">{{ T.why.sub }}</p></div>
+    <div class="grid grid-4 why-grid">
+      {% for w in pages.home.why %}
+      <div class="why3-item"><span class="why3-n">{{ '0' + loop.index }}</span><span class="tile-icon"><svg class="ic"><use href="#i-{{ w.icon }}"/></svg></span><span class="tile-title">{{ w.title | tr(lang) }}</span><span class="tile-desc muted">{{ w.text | tr(lang) }}</span></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="container">
+    <div class="cta3">
+      <div>
+        <h2>{{ V.cta_title }}</h2>
+        <p>{{ V.cta_sub }}</p>
+      </div>
+      <div class="cta3-actions">
+        <a class="btn btn-tg btn-lg" href="{{ company.telegram }}" rel="noopener" data-event="tg_click"><svg class="ic"><use href="#i-tg"/></svg>{{ T.cta.tg }}</a>
+        <a class="btn btn-white btn-lg" href="tel:{{ company.phones_raw[0] }}" data-event="phone_click"><svg class="ic"><use href="#i-phone"/></svg>{{ company.phones[0] }}</a>
+      </div>
+    </div>
+    <div class="contact-grid">
+      {% set formId = 'lead-home' %}{% set presetSpec = '' %}{% set presetProduct = '' %}{% include "partials/lead-form.njk" %}
+      <div class="contact-cards">
+        <div class="glass tile"><span class="tile-icon"><svg class="ic"><use href="#i-phone"/></svg></span><span class="tile-title">{{ T.common.phone }}</span>{% for ph in company.phones %}<a class="tile-link" href="tel:{{ company.phones_raw[loop.index0] }}" data-event="phone_click">{{ ph }}</a>{% endfor %}</div>
+        <div class="glass tile"><span class="tile-icon"><svg class="ic"><use href="#i-tg"/></svg></span><span class="tile-title">Telegram</span><a class="tile-link" href="{{ company.telegram }}" rel="noopener" data-event="tg_click">@alphaplastuz</a><a class="tile-link muted" href="mailto:{{ company.email }}">{{ company.email }}</a></div>
+        <div class="glass tile"><span class="tile-icon"><svg class="ic"><use href="#i-pin"/></svg></span><span class="tile-title">{{ T.common.address }}</span><span class="tile-desc">{{ company.address | tr(lang) }}</span><span class="tile-desc muted">{{ company.hours | tr(lang) }}</span><a class="tile-link" href="{{ (L + '/contacts/') | url }}">{{ T.cta.route }} →</a></div>
+      </div>
+    </div>
+  </div>
+</section>

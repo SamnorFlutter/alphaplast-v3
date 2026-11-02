@@ -1,0 +1,18 @@
+{# expects: bagType — white line pictogram of a bag type, 100x120 viewBox #}
+<svg class="bag-ico" viewBox="0 0 100 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+{%- if bagType == 'maika' -%}
+  <path d="M14 8h18v28c0 6 6 10 18 10s18-4 18-10V8h18v104H14z"/><path d="M32 36h36"/>
+{%- elif bagType == 'pvd' -%}
+  <rect x="14" y="8" width="72" height="104" rx="4"/><rect x="38" y="20" width="24" height="9" rx="4.5"/>
+{%- elif bagType == 'loop' -%}
+  <rect x="14" y="40" width="72" height="72" rx="4"/><path d="M34 40V26c0-10 7-16 16-16s16 6 16 16v14"/>
+{%- elif bagType == 'courier' -%}
+  <rect x="14" y="20" width="72" height="92" rx="4"/><path d="M14 20l36 26 36-26"/><path d="M24 12h52" stroke-dasharray="6 6"/>
+{%- elif bagType == 'fasovka' or bagType == 'roll' -%}
+  <path d="M22 8l6 6 6-6 6 6 6-6 6 6 6-6 6 6 6-6 4 4v100H18V12z"/><path d="M30 44l40 22M30 70l40 22"/>
+{%- elif bagType == 'film' or bagType == 'hood' -%}
+  <rect x="26" y="8" width="48" height="104" rx="10"/><ellipse cx="50" cy="18" rx="24" ry="8"/><path d="M50 18v94"/>
+{%- else -%}
+  <rect x="14" y="8" width="72" height="104" rx="4"/>
+{%- endif -%}
+</svg>
